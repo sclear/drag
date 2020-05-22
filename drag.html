@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .dialog {
+            cursor: move;
+        }
+
+        .dialog>.left {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: w-resize;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .dialog>.right {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: e-resize;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .dialog>.top {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: n-resize;
+            position: absolute;
+            right: 45%;
+            top: 0;
+            transform: translate(50%, -50%);
+        }
+
+        .dialog>.bottom {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: s-resize;
+            position: absolute;
+            right: 45%;
+            bottom: 0;
+            transform: translate(0, 50%);
+        }
+
+        .dialog>.topLeft {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: nw-resize;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        .dialog>.topRight {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: ne-resize;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: translate(50%, -50%);
+        }
+
+        .dialog>.bottomLeft {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: sw-resize;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            transform: translate(-50%, 50%);
+        }
+
+        .dialog>.bottomRight {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            cursor: se-resize;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            transform: translate(50%, 50%);
+        }
+
+        .dialog>.rotate {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            /* cursor: url(http://hr.xesv5.com/docs/imgs/mouserotate.ico) 10 10, auto; */
+            cursor: url('./img/rotateicon.png') 10 10, default;
+            /* cursor: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1590150151168&di=970a909074dec0687e043ccca319db9e&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F971787d18e291a1112216f9371e0361cd6de2b891207e-3Rg9hw_fw658) 10 10, pointer; */
+            position: absolute;
+            right: 45%;
+            top: 0;
+            transform: translate(50%, -250%);
+        }
+    </style>
+</head>
+
+<body style="position: relative;height: 100vh;">
+
+    <div id="test" class="dialog"
+        style="position:absolute;left:0;top:0px;height: 200px;width: 200px;background: red;transform: rotate(0deg);">
+    </div>
+    <script>
+        // 旋转后计算角位置
+        let pointObj = {}
+        let MoveType = null
+        //获取旋转角度
+        var dragObj = document.getElementById("test");
+        function getRotate(target) {
+            var st = window.getComputedStyle(target, null);
+            var tr = st.getPropertyValue("-webkit-transform") ||
+                st.getPropertyValue("-moz-transform") ||
+                st.getPropertyValue("-ms-transform") ||
+                st.getPropertyValue("-o-transform") ||
+                st.getPropertyValue("transform") || "FAIL";
+            // With rotate(30deg)...
+            // matrix(0.866025, 0.5, -0.5, 0.866025, 0px, 0px)
+            if (tr !== 'none') {
+                var values = tr.split('(')[1].split(')')[0].split(',');
+                var a = values[0];
+                var b = values[1];
+                var c = values[2];
+                var d = values[3];
+                var scale = Math.sqrt(a * a + b * b);
+                // arc sin, convert from radians to degrees, round
+                var sin = b / scale;
+                // next line works for 30deg but not 130deg (returns 50);
+                // var angle = Math.round(Math.asin(sin) * (180/Math.PI));
+                var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI))
+                if (angle < 0) {
+                    angle = 360 + angle
+                }
+                return angle
+            } else {
+                return 0
+            }
+        }
+        // 计算变换后的方框四个角的位置
+        function getTransferPosition(left, top, width, height, angle, center) {
+            console.log(arguments)
+            var a1 = {
+                x: left,
+                y: top
+            }
+            var a2 = {
+                x: left,
+                y: top + height
+            }
+            var a3 = {
+                x: left + width,
+                y: top
+            }
+            var a4 = {
+                x: left + width,
+                y: top + height
+            }
+            var a5 = {
+                x: left,
+                y: top + height / 2
+            }
+            var a6 = {
+                x: left + width,
+                y: top + height / 2
+            }
+            var a7 = {
+                x: left + width / 2,
+                y: top
+            }
+            var a8 = {
+                x: left + width / 2,
+                y: top + height
+            }
+            pointObj.leftTopPoint = getRotatedPoint(a1, center, angle)
+            pointObj.leftBottomPoint = getRotatedPoint(a2, center, angle)
+            pointObj.rightTopPoint = getRotatedPoint(a3, center, angle)
+            pointObj.rightBottomPoint = getRotatedPoint(a4, center, angle)
+            pointObj.leftMiddlePoint = getRotatedPoint(a5, center, angle)
+            pointObj.rightMiddlePoint = getRotatedPoint(a6, center, angle)
+            pointObj.topMiddlePoint = getRotatedPoint(a7, center, angle)
+            pointObj.bottomMiddlePoint = getRotatedPoint(a8, center, angle)
+        }
+        //
+        function getRotatedPoint(curPos, centerPos, angle) {
+            return {
+                x: Math.floor((curPos.x - centerPos.x) * Math.cos(Math.PI / 180 * angle) - (curPos.y - centerPos.y) * Math.sin(Math.PI / 180 * angle) + centerPos.x),
+                y: Math.floor((curPos.x - centerPos.x) * Math.sin(Math.PI / 180 * angle) + (curPos.y - centerPos.y) * Math.cos(Math.PI / 180 * angle) + centerPos.y)
+            }
+        }
+        // 初始化记录坐标
+        function initPoint(targetObj) {
+            pointObj.left = targetObj.offsetLeft
+            console.log(targetObj.offsetLeft)
+            pointObj.top = targetObj.offsetTop
+            pointObj.width = targetObj.offsetWidth
+            pointObj.height = targetObj.offsetHeight
+            // pointObj.angle = 45
+            pointObj.angle = getRotate(dragObj)
+            // console.log(pointObj)
+            pointObj.rightBottomPoint = {
+                x: pointObj.width + pointObj.left,
+                y: pointObj.height + pointObj.top
+            }
+            // 记录初始盒子右上角位置
+            pointObj.rightTopPoint = {
+                x: pointObj.width + pointObj.left,
+                y: pointObj.top
+            }
+            // 记录左上角的位置
+            pointObj.leftTopPoint = {
+                x: pointObj.left,
+                y: pointObj.top
+            }
+            // 左下
+            pointObj.leftBottomPoint = {
+                x: pointObj.left,
+                y: pointObj.top + pointObj.height
+            }
+            // 左中
+            pointObj.leftMiddlePoint = {
+                x: pointObj.left,
+                y: pointObj.top + pointObj.height / 2
+            }
+            // 右中
+            pointObj.rightMiddlePoint = {
+                x: pointObj.left + pointObj.width,
+                y: pointObj.top + pointObj.height / 2
+            }
+            // 上中
+            pointObj.topMiddlePoint = {
+                x: pointObj.left + pointObj.width / 2,
+                y: pointObj.top
+            }
+            // 下中
+            pointObj.bottomMiddlePoint = {
+                x: pointObj.left + pointObj.width / 2,
+                y: pointObj.top + pointObj.height
+            }
+            // 记录中心位置
+            pointObj.centerPos = {
+                x: pointObj.left + pointObj.width / 2,
+                y: pointObj.top + pointObj.height / 2
+            }
+            console.log(pointObj)
+        }
+        initPoint(dragObj)
+        // 每次移动后结束后坐标记录
+        function moveInit(type, e, target) {
+            pointObj.mouseInit = {
+                x: Math.floor(e.clientX),
+                y: Math.floor(e.clientY)
+            }
+            pointObj.scale = dragObj.offsetWidth / dragObj.offsetHeight
+            pointObj.initAngle = pointObj.angle
+            pointObj.initRightBottomPoint = pointObj.rightBottomPoint
+            pointObj.initRightTopPoint = pointObj.rightTopPoint
+            pointObj.initLeftTopPoint = pointObj.leftTopPoint
+            pointObj.initLeftBottomPoint = pointObj.leftBottomPoint
+            pointObj.initLeftMiddlePoint = pointObj.leftMiddlePoint
+            pointObj.initRightMiddlePoint = pointObj.rightMiddlePoint
+            pointObj.initTopMiddlePoint = pointObj.topMiddlePoint
+            pointObj.initBottomMiddlePoint = pointObj.bottomMiddlePoint
+            pointObj.initCenterPos = pointObj.centerPos
+            pointObj.initPosition = {
+                x: pointObj.left,
+                y: pointObj.top
+            }
+            if (type === 0) {
+                pointObj.preRadian = Math.atan2(pointObj.mouseInit.y - pointObj.centerPos.y, pointObj.mouseInit.x - pointObj.centerPos.x)
+                console.log(pointObj.preRadian)
+            }
+        }
+
+        function R_Rad(r) {
+            return Math.cos(r * Math.PI / 180)
+        }
+        var mouseX, mouseY, objX, objY, objw, objh;
+        var dragging = false;
+        dragObj.onmousedown = function (event) {
+            MoveType = 'event'
+            event = event || window.event;
+            dragging = true;
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+            objX = parseInt(dragObj.style.left);
+            objY = parseInt(dragObj.style.top);
+            moveInit(1, event, 1)
+        }
+        document.onmousemove = function (event) {
+            event = event || window.event;
+            if (MoveType === 'event') {
+                if (dragging) {
+                    let dis = {
+                        x: Math.floor(event.clientX - pointObj.mouseInit.x),
+                        y: Math.floor(event.clientY - pointObj.mouseInit.y)
+                    }
+                    pointObj.left = dis.x + pointObj.initPosition.x;
+                    pointObj.top = dis.y + pointObj.initPosition.y;
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                    pointObj.centerPos = {
+                        x: pointObj.initCenterPos.x + dis.x,
+                        y: pointObj.initCenterPos.y + dis.y
+                    }
+
+
+                }
+            }
+            if (MoveType === 'top') {
+                if (dragging) {
+                    // 求旋转图像Tm
+                    let rotateCurrentPos = getRotatedPoint({
+                        x: event.clientX,
+                        y: event.clientY
+                    }, pointObj.bottomMiddlePoint, -pointObj.initAngle)
+                    // 图像Tm
+                    let rotatedTopMiddlePoint = {
+                        x: pointObj.bottomMiddlePoint.x,
+                        y: rotateCurrentPos.y
+                    }
+                    let newHeight = pointObj.bottomMiddlePoint.y - rotatedTopMiddlePoint.y;
+                    if (newHeight <= 42) {
+                        newHeight = 42
+                        rotatedTopMiddlePoint.y = pointObj.bottomMiddlePoint.y - 42
+                    }
+                    pointObj.topMiddlePoint = getRotatedPoint(rotatedTopMiddlePoint, pointObj.bottomMiddlePoint, pointObj.initAngle)
+                    pointObj.centerPos = {
+                        x: (pointObj.topMiddlePoint.x + pointObj.bottomMiddlePoint.x) / 2,
+                        y: (pointObj.topMiddlePoint.y + pointObj.bottomMiddlePoint.y) / 2
+                    }
+                    console.log(pointObj.topMiddlePoint)
+                    pointObj.left = pointObj.centerPos.x - dragObj.offsetWidth / 2
+                    pointObj.top = pointObj.centerPos.y - newHeight / 2
+                    pointObj.height = newHeight
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.height = `${pointObj.height}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                }
+            }
+            if (MoveType === 'bottom' && dragging) {
+                // 求旋转图像Tm
+                let rotateCurrentPos = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.topMiddlePoint, -pointObj.initAngle)
+                // 图像Tm
+                let rotatedBottomMiddlePoint = {
+                    x: pointObj.topMiddlePoint.x,
+                    y: rotateCurrentPos.y
+                }
+                let newHeight = rotatedBottomMiddlePoint.y - pointObj.topMiddlePoint.y;
+                if (newHeight <= 42) {
+                    newHeight = 42
+                    rotatedBottomMiddlePoint.y = pointObj.topMiddlePoint.y + 42
+                }
+                pointObj.bottomMiddlePoint = getRotatedPoint(rotatedBottomMiddlePoint, pointObj.topMiddlePoint, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: (pointObj.bottomMiddlePoint.x + pointObj.topMiddlePoint.x) / 2,
+                    y: (pointObj.bottomMiddlePoint.y + pointObj.topMiddlePoint.y) / 2
+                }
+                pointObj.left = pointObj.centerPos.x - dragObj.offsetWidth / 2
+                pointObj.top = pointObj.centerPos.y - newHeight / 2
+                pointObj.height = newHeight
+                dragObj.style.left = `${pointObj.left}px`
+                dragObj.style.height = `${pointObj.height}px`
+                dragObj.style.top = `${pointObj.top}px`
+            }
+            if (MoveType === 'left' && dragging) {
+                // 求旋转图像Tm
+                let rotateCurrentPos = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.rightMiddlePoint, -pointObj.initAngle)
+                // 图像Tm
+                let rotatedLeftMiddlePonit = {
+                    x: rotateCurrentPos.x,
+                    y: pointObj.rightMiddlePoint.y
+                }
+                console.log(pointObj.initAngle)
+                let newWidth = pointObj.rightMiddlePoint.x - rotatedLeftMiddlePonit.x;
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    rotatedLeftMiddlePonit.x = pointObj.rightMiddlePoint.x - 42
+                }
+                pointObj.leftMiddlePoint = getRotatedPoint(rotatedLeftMiddlePonit, pointObj.rightMiddlePoint, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((pointObj.leftMiddlePoint.x + pointObj.rightMiddlePoint.x) / 2),
+                    y: Math.floor((pointObj.leftMiddlePoint.y + pointObj.rightMiddlePoint.y) / 2)
+                }
+                pointObj.left = pointObj.centerPos.x - newWidth / 2
+                pointObj.top = pointObj.centerPos.y - dragObj.offsetHeight / 2
+                pointObj.width = newWidth
+                dragObj.style.left = `${pointObj.left}px`
+                dragObj.style.width = `${pointObj.width}px`
+                dragObj.style.top = `${pointObj.top}px`
+            }
+            if (MoveType === 'right' && dragging) {
+                // 求旋转图像Tm
+                let rotateCurrentPos = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.leftMiddlePoint, -pointObj.initAngle)
+                // 图像Tm
+                let rotatedRightMiddlePoint = {
+                    x: rotateCurrentPos.x,
+                    y: pointObj.leftMiddlePoint.y
+                }
+                console.log(pointObj.initAngle)
+                let newWidth = rotatedRightMiddlePoint.x - pointObj.leftMiddlePoint.x;
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    rotatedRightMiddlePoint.x = pointObj.leftMiddlePoint.x + 42
+                }
+                pointObj.rightMiddlePoint = getRotatedPoint(rotatedRightMiddlePoint, pointObj.leftMiddlePoint, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((pointObj.leftMiddlePoint.x + pointObj.rightMiddlePoint.x) / 2),
+                    y: Math.floor((pointObj.leftMiddlePoint.y + pointObj.rightMiddlePoint.y) / 2)
+                }
+                pointObj.left = pointObj.centerPos.x - newWidth / 2
+                pointObj.top = pointObj.centerPos.y - dragObj.offsetHeight / 2
+                pointObj.width = newWidth
+                dragObj.style.left = `${pointObj.left}px`
+                dragObj.style.width = `${pointObj.width}px`
+                dragObj.style.top = `${pointObj.top}px`
+            }
+            if (MoveType === 'rotate') {
+                if (dragging) {
+                    pointObj.rotateCurrent = {
+                        x: Math.floor(event.clientX),
+                        y: Math.floor(event.clientY)
+                    }
+                    pointObj.curRadian = Math.atan2(pointObj.rotateCurrent.y - pointObj.centerPos.y, pointObj.rotateCurrent.x - pointObj.centerPos.x)
+                    pointObj.tranformRadian = pointObj.curRadian - pointObj.preRadian
+                    pointObj.angle = getRotate(dragObj) + Math.round(pointObj.tranformRadian * 180 / Math.PI)
+                    dragObj.style.transform = `rotate(${pointObj.angle}deg)`
+                    pointObj.preRadian = pointObj.curRadian
+                    // 重新计算旋转后四个点的坐标变化
+                    let disAngle = pointObj.angle - pointObj.initAngle
+                    pointObj.rightBottomPoint = getRotatedPoint(pointObj.initRightBottomPoint, pointObj.centerPos, disAngle)
+                    pointObj.rightTopPoint = getRotatedPoint(pointObj.initRightTopPoint, pointObj.centerPos, disAngle)
+                    pointObj.leftTopPoint = getRotatedPoint(pointObj.initLeftTopPoint, pointObj.centerPos, disAngle)
+                    pointObj.leftBottomPoint = getRotatedPoint(pointObj.initLeftBottomPoint, pointObj.centerPos, disAngle)
+                    pointObj.leftMiddlePoint = getRotatedPoint(pointObj.initLeftMiddlePoint, pointObj.centerPos, disAngle)
+                    pointObj.rightMiddlePoint = getRotatedPoint(pointObj.initRightMiddlePoint, pointObj.centerPos, disAngle)
+                    pointObj.topMiddlePoint = getRotatedPoint(pointObj.initTopMiddlePoint, pointObj.centerPos, disAngle)
+                    pointObj.bottomMiddlePoint = getRotatedPoint(pointObj.initBottomMiddlePoint, pointObj.centerPos, disAngle)
+                }
+            }
+            if (MoveType === 'topLeft' && dragging) {
+                pointObj.centerPos = {
+                    x: Math.floor((event.clientX + pointObj.rightBottomPoint.x) / 2),
+                    y: Math.floor((event.clientY + pointObj.rightMiddlePoint.y) / 2)
+                }
+                // 计算旋转为水平角度的两点坐标
+                newLeftTopPoint = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.centerPos, -pointObj.initAngle)
+                newRightBottomPoint = getRotatedPoint(pointObj.rightBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightBottomPoint.x - newLeftTopPoint.x
+                newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+                // if (pointObj.isScale) {
+                if (newWidth / newHeight > pointObj.scale) {
+                    newLeftTopPoint.x = newLeftTopPoint.x + Math.abs(newWidth - newHeight * pointObj.scale)
+                    newWidth = newHeight * pointObj.scale
+                } else {
+                    newLeftTopPoint.y = newLeftTopPoint.y + Math.abs(newHeight - newWidth / pointObj.scale)
+                    newHeight = newWidth / pointObj.scale
+                }
+                // 计算出左上角等比角度变换后水平坐标后，再计算旋转后的角度
+                var rotateLeftTopPoint = getRotatedPoint(newLeftTopPoint, pointObj.centerPos, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((rotateLeftTopPoint.x + pointObj.rightBottomPoint.x) / 2),
+                    y: Math.floor((rotateLeftTopPoint.y + pointObj.rightBottomPoint.y) / 2)
+                }
+                newLeftTopPoint = getRotatedPoint(rotateLeftTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newRightBottomPoint = getRotatedPoint(pointObj.rightBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightBottomPoint.x - newLeftTopPoint.x
+                newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    newHeight = Math.floor(newWidth / pointObj.scale)
+                    newLeftTopPoint.x = newRightBottomPoint.x - newWidth
+                    newLeftTopPoint.y = newRightBottomPoint.y - newHeight
+                }
+                if (newHeight <= 42) {
+                    newHeight = 42
+                    newWidth = Math.floor(newHeight * pointObj.scale)
+                    newLeftTopPoint.y = newRightBottomPoint.y - newHeight
+                    newLeftTopPoint.x = newRightBottomPoint.x - newWidth
+                }
+                if (newHeight > 42 && newWidth > 42) {
+                    pointObj.left = newLeftTopPoint.x
+                    pointObj.top = newLeftTopPoint.y
+                    pointObj.width = newWidth
+                    pointObj.height = newHeight
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                    dragObj.style.width = `${pointObj.width}px`
+                    dragObj.style.height = `${pointObj.height}px`
+                }
+            }
+            if (MoveType === 'topRight' && dragging) {
+                pointObj.centerPos = {
+                    x: Math.floor((event.clientX + pointObj.leftBottomPoint.x) / 2),
+                    y: Math.floor((event.clientY + pointObj.leftBottomPoint.y) / 2)
+                }
+                newRightTopPoint = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.centerPos, -pointObj.initAngle)
+                newLeftBottomPoint = getRotatedPoint(pointObj.leftBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightTopPoint.x - newLeftBottomPoint.x
+                newHeight = newLeftBottomPoint.y - newRightTopPoint.y
+                // if (pointObj.isScale) {
+                if (newWidth / newHeight > pointObj.scale) {
+                    newRightTopPoint.x = newRightTopPoint.x - Math.abs(newWidth - newHeight * pointObj.scale)
+                    newWidth = newHeight * pointObj.scale
+                } else {
+                    newRightTopPoint.y = newRightTopPoint.y + Math.abs(newHeight - newWidth / pointObj.scale)
+                    newHeight = newWidth / pointObj.scale
+                }
+                let rotatedRightTopPoint = getRotatedPoint(newRightTopPoint, pointObj.centerPos, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((rotatedRightTopPoint.x + pointObj.leftBottomPoint.x) / 2),
+                    y: Math.floor((rotatedRightTopPoint.y + pointObj.leftBottomPoint.y) / 2)
+                }
+                newLeftBottomPoint = getRotatedPoint(pointObj.leftBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newRightTopPoint = getRotatedPoint(rotatedRightTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightTopPoint.x - newLeftBottomPoint.x
+                newHeight = newLeftBottomPoint.y - newRightTopPoint.y
+                // }
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    newHeight = Math.floor(newWidth / pointObj.scale)
+                    newRightTopPoint = {
+                        x: newLeftBottomPoint.x + newWidth,
+                        y: newLeftBottomPoint.y - newHeight
+                    }
+                }
+                if (newHeight <= 42) {
+                    newHeight = 42
+                    newWidth = Math.floor(newHeight * pointObj.scale)
+                    newRightTopPoint = {
+                        x: newLeftBottomPoint.x + newWidth,
+                        y: newLeftBottomPoint.y - newHeight
+                    }
+                }
+
+                if (newWidth > 42 && newHeight > 42) {
+                    pointObj.left = newLeftBottomPoint.x
+                    pointObj.top = newRightTopPoint.y
+                    pointObj.width = newWidth
+                    pointObj.height = newHeight
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                    dragObj.style.width = `${pointObj.width}px`
+                    dragObj.style.height = `${pointObj.height}px`
+                }
+            }
+            if (MoveType === 'bottomLeft' && dragging) {
+                pointObj.centerPos = {
+                    x: Math.floor((event.clientX + pointObj.rightTopPoint.x) / 2),
+                    y: Math.floor((event.clientY + pointObj.rightTopPoint.y) / 2)
+                }
+                newLeftBottomPoint = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.centerPos, -pointObj.initAngle)
+                newRightTopPoint = getRotatedPoint(pointObj.rightTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightTopPoint.x - newLeftBottomPoint.x
+                newHeight = newLeftBottomPoint.y - newRightTopPoint.y
+                // if (pointObj.isScale) {
+                if (newWidth / newHeight > pointObj.scale) {
+                    newLeftBottomPoint.x = newLeftBottomPoint.x + Math.abs(newWidth - newHeight * pointObj.scale)
+                    newWidth = newHeight * pointObj.scale
+                } else {
+                    newLeftBottomPoint.y = newLeftBottomPoint.y - Math.abs(newHeight - newWidth / pointObj.scale)
+                    newHeight = newWidth / pointObj.scale
+                }
+                var rotatedLeftBottomPoint = getRotatedPoint(newLeftBottomPoint, pointObj.centerPos, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((rotatedLeftBottomPoint.x + pointObj.rightTopPoint.x) / 2),
+                    y: Math.floor((rotatedLeftBottomPoint.y + pointObj.rightTopPoint.y) / 2)
+                }
+                newLeftBottomPoint = getRotatedPoint(rotatedLeftBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newRightTopPoint = getRotatedPoint(pointObj.rightTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightTopPoint.x - newLeftBottomPoint.x
+                newHeight = newLeftBottomPoint.y - newRightTopPoint.y
+                // }
+                if (newHeight <= 42) {
+                    newHeight = 42
+                    newWidth = Math.floor(newHeight * pointObj.scale)
+                    newLeftBottomPoint = {
+                        x: newRightTopPoint.x - newWidth,
+                        y: newRightTopPoint.y + newHeight
+                    }
+                }
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    newHeight = Math.floor(newWidth / pointObj.scale)
+                    newLeftBottomPoint = {
+                        x: newRightTopPoint.x - newWidth,
+                        y: newRightTopPoint.y + newHeight
+                    }
+                }
+                if (newHeight > 42 && newHeight > 42) {
+                    pointObj.left = newLeftBottomPoint.x
+                    pointObj.top = newRightTopPoint.y
+                    pointObj.width = newWidth
+                    pointObj.height = newHeight
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                    dragObj.style.width = `${pointObj.width}px`
+                    dragObj.style.height = `${pointObj.height}px`
+                }
+            }
+            if (MoveType === 'bottomRight' && dragging) {
+                pointObj.centerPos = {
+                    x: Math.floor((event.clientX + pointObj.leftTopPoint.x) / 2),
+                    y: Math.floor((event.clientY + pointObj.leftTopPoint.y) / 2)
+                }
+                newRightBottomPoint = getRotatedPoint({
+                    x: event.clientX,
+                    y: event.clientY
+                }, pointObj.centerPos, -pointObj.initAngle)
+                newLeftTopPoint = getRotatedPoint(pointObj.leftTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightBottomPoint.x - newLeftTopPoint.x
+                newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+                if (newWidth / newHeight > pointObj.scale) {
+                    newRightBottomPoint.x = newRightBottomPoint.x - Math.abs(newWidth - newHeight * pointObj.scale)
+                    newWidth = newHeight * pointObj.scale
+                } else {
+                    newRightBottomPoint.y = newRightBottomPoint.y - Math.abs(newHeight - newWidth / pointObj.scale)
+                    newHeight = newWidth / pointObj.scale
+                }
+                let rotatedRightBottomPoint = getRotatedPoint(newRightBottomPoint, pointObj.centerPos, pointObj.initAngle)
+                pointObj.centerPos = {
+                    x: Math.floor((rotatedRightBottomPoint.x + pointObj.leftTopPoint.x) / 2),
+                    y: Math.floor((rotatedRightBottomPoint.y + pointObj.leftTopPoint.y) / 2)
+                }
+                newLeftTopPoint = getRotatedPoint(pointObj.leftTopPoint, pointObj.centerPos, -pointObj.initAngle)
+                newRightBottomPoint = getRotatedPoint(rotatedRightBottomPoint, pointObj.centerPos, -pointObj.initAngle)
+                newWidth = newRightBottomPoint.x - newLeftTopPoint.x
+                newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+                if (newWidth <= 42) {
+                    newWidth = 42
+                    newHeight = Math.floor(newWidth / pointObj.scale)
+                    newRightBottomPoint = {
+                        x: newLeftTopPoint.x + newWidth,
+                        y: newLeftTopPoint.y + newHeight
+                    }
+                }
+                if (newHeight <= 42) {
+                    newHeight = 42
+                    newWidth = Math.floor(newHeight * pointObj.scale)
+                    newRightBottomPoint = {
+                        x: newLeftTopPoint.x + newWidth,
+                        y: newLeftTopPoint.y + newHeight
+                    }
+                }
+                if (newWidth > 42 && newHeight > 42) {
+                    pointObj.left = newLeftTopPoint.x
+                    pointObj.top = newLeftTopPoint.y
+                    pointObj.width = newWidth
+                    pointObj.height = newHeight
+                    dragObj.style.left = `${pointObj.left}px`
+                    dragObj.style.top = `${pointObj.top}px`
+                    dragObj.style.width = `${pointObj.width}px`
+                    dragObj.style.height = `${pointObj.height}px`
+                }
+            }
+
+        }
+        document.onmouseup = function () {
+            dragging = false;
+            event = event || window.event;
+            dragObj.mouseInit = {
+                x: Math.floor(event.clientX),
+                y: Math.floor(event.clientY)
+            }
+            getTransferPosition(pointObj.left, pointObj.top, pointObj.width, pointObj.height, pointObj.angle, pointObj.centerPos)
+        }
+        let style = getComputedStyle(dragObj)
+        function create(el, className) {
+            let newEl = document.createElement('div');
+            newEl.className = className;
+            newEl.draggable = true
+            el.appendChild(newEl)
+        }
+        create(dragObj, 'left')
+        create(dragObj, 'right')
+        create(dragObj, 'top')
+        create(dragObj, 'rotate')
+        create(dragObj, 'bottom')
+        create(dragObj, 'topLeft')
+        create(dragObj, 'topRight')
+        create(dragObj, 'bottomLeft')
+        create(dragObj, 'bottomRight')
+        document.querySelector('.rotate').addEventListener('mousedown', e => {
+            e.stopPropagation()
+            moveInit(0, e, dragObj)
+        })
+
+        document.querySelector('.top').onmousedown = function (event) {
+            MoveType = 'top'
+            event = event || window.event;
+            event.stopPropagation()
+            event.preventDefault()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.left').onmousedown = function (event) {
+            MoveType = 'left'
+            event = event || window.event;
+            event.stopPropagation()
+            event.preventDefault()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.rotate').onmousedown = function (event) {
+            MoveType = 'rotate'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.right').onmousedown = function (event) {
+            MoveType = 'right'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.bottom').onmousedown = function (event) {
+            MoveType = 'bottom'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.topLeft').onmousedown = function (event) {
+            MoveType = 'topLeft'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.topRight').onmousedown = function (event) {
+            MoveType = 'topRight'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.bottomLeft').onmousedown = function (event) {
+            MoveType = 'bottomLeft'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+        document.querySelector('.bottomRight').onmousedown = function (event) {
+            MoveType = 'bottomRight'
+            event = event || window.event;
+            event.preventDefault()
+            event.stopPropagation()
+            dragging = true;
+            moveInit(1, event, 1)
+        }
+    </script>
+</body>
+
+</html>
