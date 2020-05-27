@@ -85,3 +85,57 @@ export function getTransferPosition(left, top, width, height, angle, center, poi
     point.topMiddlePoint = getRotatedPoint(a7, center, angle)
     point.bottomMiddlePoint = getRotatedPoint(a8, center, angle)
 }
+
+
+// 初始化点阵
+export function initPoint(point, targetObj) {
+    point.left = targetObj.offsetLeft
+    point.top = targetObj.offsetTop
+    point.width = targetObj.offsetWidth
+    point.height = targetObj.offsetHeight
+    point.angle = getRotate(targetObj)
+    point.rightBottomPoint = {
+        x: point.width + point.left,
+        y: point.height + point.top
+    }
+    // 记录初始盒子右上角位置
+    point.rightTopPoint = {
+        x: point.width + point.left,
+        y: point.top
+    }
+    // 记录左上角的位置
+    point.leftTopPoint = {
+        x: point.left,
+        y: point.top
+    }
+    // 左下
+    point.leftBottomPoint = {
+        x: point.left,
+        y: point.top + point.height
+    }
+    // 左中
+    point.leftMiddlePoint = {
+        x: point.left,
+        y: point.top + point.height / 2
+    }
+    // 右中
+    point.rightMiddlePoint = {
+        x: point.left + point.width,
+        y: point.top + point.height / 2
+    }
+    // 上中
+    point.topMiddlePoint = {
+        x: point.left + point.width / 2,
+        y: point.top
+    }
+    // 下中
+    point.bottomMiddlePoint = {
+        x: point.left + point.width / 2,
+        y: point.top + point.height
+    }
+    // 记录中心位置
+    point.centerPos = {
+        x: point.left + point.width / 2,
+        y: point.top + point.height / 2
+    }
+}

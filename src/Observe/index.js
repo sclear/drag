@@ -1,5 +1,5 @@
-import { getRotate, getTransferPosition } from './util/index'
-import elmentMotion from './motion/motion.js'
+import { getRotate, getTransferPosition, initPoint } from '../util/index'
+import elmentMotion from '../motion/motion.js'
 
 class Observe {
     constructor(el) {
@@ -7,7 +7,7 @@ class Observe {
         this.point = {}
         this.MoveType = null;
         this.dragging = false;
-        this.initPoint(this.point, this.el)
+        initPoint(this.point, this.el)
         this.init()
     }
     init() {
@@ -40,13 +40,8 @@ class Observe {
         create(this.el, 'topRight')
         create(this.el, 'bottomLeft')
         create(this.el, 'bottomRight');
-        // document.querySelector('.rotate').addEventListener('mousedown', e => {
-        //     e.stopPropagation()
-        //     this.moveInit(0, e, this.el)
-        // });
         [...this.el.children].forEach(item=> {
                 item.onmousedown = (event)=>  {
-                console.log(event)
                 this.MoveType = item.className
                 event.stopPropagation()
                 event.preventDefault()
@@ -54,58 +49,6 @@ class Observe {
                 this.moveInit(1, event, 1)
             }
         })
-    }
-    // 初始化点阵
-    initPoint(point, targetObj) {
-        point.left = targetObj.offsetLeft
-        point.top = targetObj.offsetTop
-        point.width = targetObj.offsetWidth
-        point.height = targetObj.offsetHeight
-        point.angle = getRotate(targetObj)
-        point.rightBottomPoint = {
-            x: point.width + point.left,
-            y: point.height + point.top
-        }
-        // 记录初始盒子右上角位置
-        point.rightTopPoint = {
-            x: point.width + point.left,
-            y: point.top
-        }
-        // 记录左上角的位置
-        point.leftTopPoint = {
-            x: point.left,
-            y: point.top
-        }
-        // 左下
-        point.leftBottomPoint = {
-            x: point.left,
-            y: point.top + point.height
-        }
-        // 左中
-        point.leftMiddlePoint = {
-            x: point.left,
-            y: point.top + point.height / 2
-        }
-        // 右中
-        point.rightMiddlePoint = {
-            x: point.left + point.width,
-            y: point.top + point.height / 2
-        }
-        // 上中
-        point.topMiddlePoint = {
-            x: point.left + point.width / 2,
-            y: point.top
-        }
-        // 下中
-        point.bottomMiddlePoint = {
-            x: point.left + point.width / 2,
-            y: point.top + point.height
-        }
-        // 记录中心位置
-        point.centerPos = {
-            x: point.left + point.width / 2,
-            y: point.top + point.height / 2
-        }
     }
     // Move初始化
     moveInit(type, e) {
