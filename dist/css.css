@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.dialog {
+    cursor: move;
+}
+
+.dialog>.left {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: w-resize;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dialog>.right {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: e-resize;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+}
+
+.dialog>.top {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: n-resize;
+    position: absolute;
+    right: 45%;
+    top: 0;
+    transform: translate(50%, -50%);
+}
+
+.dialog>.bottom {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: s-resize;
+    position: absolute;
+    right: 45%;
+    bottom: 0;
+    transform: translate(0, 50%);
+}
+
+.dialog>.topLeft {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: nw-resize;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+}
+
+.dialog>.topRight {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: ne-resize;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+}
+
+.dialog>.bottomLeft {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: sw-resize;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+}
+
+.dialog>.bottomRight {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    cursor: se-resize;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(50%, 50%);
+}
+
+.dialog>.rotate {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    /* cursor: url('./img/rotateicon.png') 10 10, default; */
+    position: absolute;
+    right: 45%;
+    top: 0;
+    transform: translate(50%, -250%);
+}
