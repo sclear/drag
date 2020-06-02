@@ -110,7 +110,8 @@
     border-radius: 50%;
     /* cursor: url('./img/rotateicon.png') 10 10, default; */
     position: absolute;
-    right: 45%;
+    /* right: 45%; */
+    left: 50%;
     top: 0;
-    transform: translate(50%, -250%);
+    transform: translate(-50%, -250%);
 }

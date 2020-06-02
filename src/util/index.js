@@ -94,6 +94,7 @@ export function initPoint(point, targetObj) {
     point.width = targetObj.offsetWidth
     point.height = targetObj.offsetHeight
     point.angle = getRotate(targetObj)
+    // point.preRadian = 0;
     point.rightBottomPoint = {
         x: point.width + point.left,
         y: point.height + point.top

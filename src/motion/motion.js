@@ -17,7 +17,7 @@ class Motion {
 }
 
 let elmentMotion = new Motion()
-elmentMotion.addMotion('move', function(e, dragObj, point) {
+elmentMotion.addMotion('move', function (e, dragObj, point) {
     let dis = {
         x: Math.floor(e.clientX - point.mouseInit.x),
         y: Math.floor(e.clientY - point.mouseInit.y)
@@ -33,7 +33,7 @@ elmentMotion.addMotion('move', function(e, dragObj, point) {
         y: point.initCenterPos.y + dis.y
     }
 })
-elmentMotion.addMotion('top', function(e, dragObj, point) {
+elmentMotion.addMotion('top', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
         x: e.clientX,
@@ -63,7 +63,7 @@ elmentMotion.addMotion('top', function(e, dragObj, point) {
         top: `${point.top}px`
     }, dragObj)
 })
-elmentMotion.addMotion('bottom', function(e, dragObj, point) {
+elmentMotion.addMotion('bottom', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
         x: e.clientX,
@@ -80,6 +80,7 @@ elmentMotion.addMotion('bottom', function(e, dragObj, point) {
         rotatedBottomMiddlePoint.y = point.topMiddlePoint.y + 42
     }
     point.bottomMiddlePoint = getRotatedPoint(rotatedBottomMiddlePoint, point.topMiddlePoint, point.initAngle)
+    // console.log(point.bottomMiddlePoint) 
     point.centerPos = {
         x: (point.bottomMiddlePoint.x + point.topMiddlePoint.x) / 2,
         y: (point.bottomMiddlePoint.y + point.topMiddlePoint.y) / 2
@@ -92,8 +93,11 @@ elmentMotion.addMotion('bottom', function(e, dragObj, point) {
         height: `${point.height}px`,
         top: `${point.top}px`
     }, dragObj)
+    // console.log(point.leftTopPoint,point.rightTopPoint)
+    // console.log(point.leftBottomPoint,point.rightBottomPoint)
+    console.log(point.bottomMiddlePoint)
 })
-elmentMotion.addMotion('left', function(e, dragObj, point) {
+elmentMotion.addMotion('left', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
         x: e.clientX,
@@ -114,6 +118,7 @@ elmentMotion.addMotion('left', function(e, dragObj, point) {
         x: Math.floor((point.leftMiddlePoint.x + point.rightMiddlePoint.x) / 2),
         y: Math.floor((point.leftMiddlePoint.y + point.rightMiddlePoint.y) / 2)
     }
+    console.log(point.centerPos)
     point.left = point.centerPos.x - newWidth / 2
     point.top = point.centerPos.y - dragObj.offsetHeight / 2
     point.width = newWidth
@@ -123,7 +128,7 @@ elmentMotion.addMotion('left', function(e, dragObj, point) {
         top: `${point.top}px`
     }, dragObj)
 })
-elmentMotion.addMotion('right', function(e, dragObj, point) {
+elmentMotion.addMotion('right', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
         x: e.clientX,
@@ -153,11 +158,12 @@ elmentMotion.addMotion('right', function(e, dragObj, point) {
         top: `${point.top}px`
     }, dragObj)
 })
-elmentMotion.addMotion('rotate', function(e, dragObj, point) {
+elmentMotion.addMotion('rotate', function (e, dragObj, point) {
     point.rotateCurrent = {
         x: Math.floor(e.clientX),
         y: Math.floor(e.clientY)
     }
+    console.log(point.preRadian)
     point.curRadian = Math.atan2(point.rotateCurrent.y - point.centerPos.y, point.rotateCurrent.x - point.centerPos.x)
     point.tranformRadian = point.curRadian - point.preRadian
     point.angle = getRotate(dragObj) + Math.round(point.tranformRadian * 180 / Math.PI)
@@ -176,7 +182,7 @@ elmentMotion.addMotion('rotate', function(e, dragObj, point) {
     point.topMiddlePoint = getRotatedPoint(point.initTopMiddlePoint, point.centerPos, disAngle)
     point.bottomMiddlePoint = getRotatedPoint(point.initBottomMiddlePoint, point.centerPos, disAngle)
 })
-elmentMotion.addMotion('topLeft', function(e, dragObj, point) {
+elmentMotion.addMotion('topLeft', function (e, dragObj, point) {
     point.centerPos = {
         x: Math.floor((e.clientX + point.rightBottomPoint.x) / 2),
         y: Math.floor((e.clientY + point.rightMiddlePoint.y) / 2)
@@ -190,6 +196,7 @@ elmentMotion.addMotion('topLeft', function(e, dragObj, point) {
     let newWidth = newRightBottomPoint.x - newLeftTopPoint.x
     let newHeight = newRightBottomPoint.y - newLeftTopPoint.y
     // if (point.isScale) {
+    // if (newHeight >= 42 && newWidth >= 42) {
     if (newWidth / newHeight > point.scale) {
         newLeftTopPoint.x = newLeftTopPoint.x + Math.abs(newWidth - newHeight * point.scale)
         newWidth = newHeight * point.scale
@@ -199,14 +206,20 @@ elmentMotion.addMotion('topLeft', function(e, dragObj, point) {
     }
     // 计算出左上角等比角度变换后水平坐标后，再计算旋转后的角度
     var rotateLeftTopPoint = getRotatedPoint(newLeftTopPoint, point.centerPos, point.initAngle)
+
     point.centerPos = {
         x: Math.floor((rotateLeftTopPoint.x + point.rightBottomPoint.x) / 2),
         y: Math.floor((rotateLeftTopPoint.y + point.rightBottomPoint.y) / 2)
     }
+    // console.log(rotateLeftTopPoint)
+    // console.log(point.centerPos)
+    // console.log(point.initAngle)
     newLeftTopPoint = getRotatedPoint(rotateLeftTopPoint, point.centerPos, -point.initAngle)
     newRightBottomPoint = getRotatedPoint(point.rightBottomPoint, point.centerPos, -point.initAngle)
     newWidth = newRightBottomPoint.x - newLeftTopPoint.x
     newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+    // }
+    // console.log(newLeftTopPoint)
     if (newWidth <= 42) {
         newWidth = 42
         newHeight = Math.floor(newWidth / point.scale)
@@ -231,8 +244,15 @@ elmentMotion.addMotion('topLeft', function(e, dragObj, point) {
             height: `${point.height}px`
         }, dragObj)
     }
+    // let x = (this.point.rightBottomPoint.x + this.point.rightBottomPoint.x) / 2;
+    // let y = (this.point.leftTopPoint.y + this.point.leftTopPoint.y) / 2;
+    // point.centerPos = {
+    //     x,
+    //     y
+    // }
+    // console.log(point.centerPos)
 })
-elmentMotion.addMotion('topRight', function(e, dragObj, point) {
+elmentMotion.addMotion('topRight', function (e, dragObj, point) {
     point.centerPos = {
         x: Math.floor((e.clientX + point.leftBottomPoint.x) / 2),
         y: Math.floor((e.clientY + point.leftBottomPoint.y) / 2)
@@ -293,7 +313,7 @@ elmentMotion.addMotion('topRight', function(e, dragObj, point) {
         }, dragObj)
     }
 })
-elmentMotion.addMotion('bottomLeft', function(e, dragObj, point) {
+elmentMotion.addMotion('bottomLeft', function (e, dragObj, point) {
     point.centerPos = {
         x: Math.floor((e.clientX + point.rightTopPoint.x) / 2),
         y: Math.floor((e.clientY + point.rightTopPoint.y) / 2)
@@ -352,7 +372,7 @@ elmentMotion.addMotion('bottomLeft', function(e, dragObj, point) {
         }, dragObj)
     }
 })
-elmentMotion.addMotion('bottomRight', function(e, dragObj, point) {
+elmentMotion.addMotion('bottomRight', function (e, dragObj, point) {
     point.centerPos = {
         x: Math.floor((e.clientX + point.leftTopPoint.x) / 2),
         y: Math.floor((e.clientY + point.leftTopPoint.y) / 2)

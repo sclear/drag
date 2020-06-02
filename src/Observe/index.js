@@ -11,18 +11,20 @@ class Observe {
         this.init()
     }
     init() {
-        this.el.addEventListener('mousedown', (event)=> {
+        this.el.addEventListener('mousedown', (event) => {
             this.MoveType = 'move'
             this.dragging = true;
             this.moveInit(1, event, 1)
         }, false)
-        document.addEventListener('mousemove', (e)=> {
+        document.addEventListener('mousemove', (e) => {
             if (this.dragging) {
                 elmentMotion.update(this.MoveType, e, this.el, this.point)
             }
         }, false)
-        document.addEventListener('mouseup', (event)=> {
+        document.addEventListener('mouseup', (event) => {
             this.dragging = false;
+            // this.moveInit(1,event)
+            // console.log('up')
             getTransferPosition(this.point.left, this.point.top, this.point.width, this.point.height, this.point.angle, this.point.centerPos, this.point)
         }, false)
         function create(el, className) {
@@ -40,18 +42,21 @@ class Observe {
         create(this.el, 'topRight')
         create(this.el, 'bottomLeft')
         create(this.el, 'bottomRight');
-        [...this.el.children].forEach(item=> {
-                item.onmousedown = (event)=>  {
+        [...this.el.children].forEach(item => {
+            item.onmousedown = (event) => {
+                event.stopPropagation()
                 this.MoveType = item.className
                 event.stopPropagation()
                 event.preventDefault()
                 this.dragging = true;
                 this.moveInit(1, event, 1)
+                this.moveInit(item.className === 'rotate' ? 0 : 1, event, 1)
             }
         })
     }
     // Move初始化
     moveInit(type, e) {
+        // console.log(this.point.centerPos)
         this.point.mouseInit = {
             x: Math.floor(e.clientX),
             y: Math.floor(e.clientY)
@@ -74,6 +79,11 @@ class Observe {
         if (type === 0) {
             this.point.preRadian = Math.atan2(this.point.mouseInit.y - this.point.centerPos.y, this.point.mouseInit.x - this.point.centerPos.x)
         }
+        // console.log(this.point.rightBottomPoint)
+        // console.log(this.point.leftTopPoint)
+
+        // console.log(x,y)
+
     }
 }
 export { Observe }
