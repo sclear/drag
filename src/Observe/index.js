@@ -1,6 +1,5 @@
-import { getRotate, getTransferPosition, initPoint } from '../util/index'
+import { getRotate, getTransferPosition, initPoint, throttle } from '../util/index'
 import elmentMotion from '../motion/motion.js'
-
 class Observe {
     constructor(el) {
         this.el = el;
@@ -16,16 +15,29 @@ class Observe {
             this.dragging = true;
             this.moveInit(1, event, 1)
         }, false)
-        document.addEventListener('mousemove', (e) => {
+        let move = () => {
             if (this.dragging) {
                 elmentMotion.update(this.MoveType, e, this.el, this.point)
             }
-        }, false)
+        }
+        document.addEventListener('mousemove', throttle((e) => {
+            if (this.dragging) {
+                elmentMotion.update(this.MoveType, e, this.el, this.point)
+            }
+        }), false)
+        // document.addEventListener('mousemove', (e) => {
+        //     if (this.dragging) {
+        //         elmentMotion.update(this.MoveType, e, this.el, this.point)
+        //     }
+        // }, false)
         document.addEventListener('mouseup', (event) => {
             this.dragging = false;
-            // this.moveInit(1,event)
-            // console.log('up')
-            getTransferPosition(this.point.left, this.point.top, this.point.width, this.point.height, this.point.angle, this.point.centerPos, this.point)
+            const { left, top, width, height } = this.el.style;
+            let poins = {
+                x: parseInt(width) / 2 + parseInt(left),
+                y: parseInt(height) / 2 + parseInt(top)
+            }
+            getTransferPosition(parseInt(left), parseInt(top), parseInt(width), parseInt(height), this.point.angle, poins, this.point)
         }, false)
         function create(el, className) {
             let newEl = document.createElement('div');
@@ -56,7 +68,6 @@ class Observe {
     }
     // Move初始化
     moveInit(type, e) {
-        // console.log(this.point.centerPos)
         this.point.mouseInit = {
             x: Math.floor(e.clientX),
             y: Math.floor(e.clientY)
@@ -79,11 +90,6 @@ class Observe {
         if (type === 0) {
             this.point.preRadian = Math.atan2(this.point.mouseInit.y - this.point.centerPos.y, this.point.mouseInit.x - this.point.centerPos.x)
         }
-        // console.log(this.point.rightBottomPoint)
-        // console.log(this.point.leftTopPoint)
-
-        // console.log(x,y)
-
     }
 }
 export { Observe }

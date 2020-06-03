@@ -94,7 +94,6 @@ export function initPoint(point, targetObj) {
     point.width = targetObj.offsetWidth
     point.height = targetObj.offsetHeight
     point.angle = getRotate(targetObj)
-    // point.preRadian = 0;
     point.rightBottomPoint = {
         x: point.width + point.left,
         y: point.height + point.top
@@ -138,5 +137,21 @@ export function initPoint(point, targetObj) {
     point.centerPos = {
         x: point.left + point.width / 2,
         y: point.top + point.height / 2
+    }
+}
+
+
+export function throttle(fn, wait = 10, e) {
+    var timer = null;
+    return function () {
+        var context = this;
+        var args = arguments;
+        if (!timer) {
+            timer = setTimeout(function () {
+                fn.apply(context, args);
+                console.log('aaa')
+                timer = null;
+            }, wait)
+        }
     }
 }
