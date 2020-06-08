@@ -3,11 +3,43 @@ import elmentMotion from '../motion/motion.js'
 class Observe {
     constructor(el) {
         this.el = el;
-        this.point = {}
+        this.el.className = ''
+        this.point = {
+            section: {
+                x: parseInt(document.querySelector('section').style.left) || 0,
+                y: parseInt(document.querySelector('section').style.top) || 0,
+                s: 1 / document.querySelector('section').style.transform.match(/(?<=\().*(?=\))/g)[0] || 1
+            }
+        }
         this.MoveType = null;
         this.dragging = false;
+        this.showPoint = false;
+        this.initProxy()
         initPoint(this.point, this.el)
         this.init()
+    }
+    move(e) {
+        if (this.dragging) {
+            elmentMotion.update(this.MoveType, e, this.el, this.point)
+        }
+    }
+    initProxy() {
+        this.el.addEventListener('click', e => {
+            setTimeout(()=> {
+                this.showPoint = true
+            },4)
+        }, false)
+        let a = this.showPoint
+        Object.defineProperty(this, 'showPoint', {
+            get() {
+                return a
+            },
+            set(v) {
+                if (v) this.el.className = 'dialog'
+                else this.el.className = ''
+                a = v
+            }
+        })
     }
     init() {
         this.el.addEventListener('mousedown', (event) => {
@@ -15,21 +47,6 @@ class Observe {
             this.dragging = true;
             this.moveInit(1, event, 1)
         }, false)
-        let move = () => {
-            if (this.dragging) {
-                elmentMotion.update(this.MoveType, e, this.el, this.point)
-            }
-        }
-        document.addEventListener('mousemove', throttle((e) => {
-            if (this.dragging) {
-                elmentMotion.update(this.MoveType, e, this.el, this.point)
-            }
-        }), false)
-        // document.addEventListener('mousemove', (e) => {
-        //     if (this.dragging) {
-        //         elmentMotion.update(this.MoveType, e, this.el, this.point)
-        //     }
-        // }, false)
         document.addEventListener('mouseup', (event) => {
             this.dragging = false;
             const { left, top, width, height } = this.el.style;
@@ -69,8 +86,8 @@ class Observe {
     // Move初始化
     moveInit(type, e) {
         this.point.mouseInit = {
-            x: Math.floor(e.clientX),
-            y: Math.floor(e.clientY)
+            x: (Math.floor(e.clientX) - this.point.section.x),
+            y: (Math.floor(e.clientY) - this.point.section.y)
         }
         this.point.scale = this.el.offsetWidth / this.el.offsetHeight
         this.point.initAngle = this.point.angle
@@ -90,6 +107,9 @@ class Observe {
         if (type === 0) {
             this.point.preRadian = Math.atan2(this.point.mouseInit.y - this.point.centerPos.y, this.point.mouseInit.x - this.point.centerPos.x)
         }
+    }
+    remove() {
+        this.el.parentNode.removeChild(this.el)
     }
 }
 export { Observe }

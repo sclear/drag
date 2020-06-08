@@ -141,7 +141,7 @@ export function initPoint(point, targetObj) {
 }
 
 
-export function throttle(fn, wait = 10, e) {
+export function throttle(fn, wait = 10) {
     var timer = null;
     return function () {
         var context = this;
@@ -149,7 +149,6 @@ export function throttle(fn, wait = 10, e) {
         if (!timer) {
             timer = setTimeout(function () {
                 fn.apply(context, args);
-                console.log('aaa')
                 timer = null;
             }, wait)
         }

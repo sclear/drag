@@ -8,10 +8,10 @@
 }
 
 .dialog>.left {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #8a848440;
     cursor: w-resize;
     position: absolute;
     left: 0;
@@ -20,10 +20,10 @@
 }
 
 .dialog>.right {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: e-resize;
     position: absolute;
     right: 0;
@@ -32,22 +32,22 @@
 }
 
 .dialog>.top {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: n-resize;
     position: absolute;
     right: 45%;
     top: 0;
-    transform: translate(50%, -50%);
+    transform: translate(-70%, -50%);
 }
 
 .dialog>.bottom {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: s-resize;
     position: absolute;
     right: 45%;
@@ -56,10 +56,10 @@
 }
 
 .dialog>.topLeft {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: nw-resize;
     position: absolute;
     left: 0;
@@ -68,10 +68,10 @@
 }
 
 .dialog>.topRight {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: ne-resize;
     position: absolute;
     right: 0;
@@ -80,10 +80,10 @@
 }
 
 .dialog>.bottomLeft {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: sw-resize;
     position: absolute;
     left: 0;
@@ -92,10 +92,10 @@
 }
 
 .dialog>.bottomRight {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     cursor: se-resize;
     position: absolute;
     right: 0;
@@ -104,10 +104,10 @@
 }
 
 .dialog>.rotate {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background:white;
+    border:1px solid #00000040;
     /* cursor: url('./img/rotateicon.png') 10 10, default; */
     position: absolute;
     /* right: 45%; */
