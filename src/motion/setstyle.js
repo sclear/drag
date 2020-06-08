@@ -3,3 +3,5 @@ export function setStyle(options, element) {
         element.style[key] = options[key]
     }
 }
+
+

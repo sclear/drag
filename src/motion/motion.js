@@ -14,13 +14,16 @@ class Motion {
     update(type, e, dragObj, point) {
         this.MotionType[type].call(this, e, dragObj, point)
     }
+    setChangeScreen() {
+
+    }
 }
 
 let elmentMotion = new Motion()
 elmentMotion.addMotion('move', function (e, dragObj, point) {
     let dis = {
-        x: Math.floor(e.clientX - point.mouseInit.x),
-        y: Math.floor(e.clientY - point.mouseInit.y)
+        x: (Math.floor(e.clientX - point.mouseInit.x)-point.section.x),
+        y: (Math.floor(e.clientY - point.mouseInit.y)-point.section.y)
     }
     point.left = dis.x + point.initPosition.x;
     point.top = dis.y + point.initPosition.y;
@@ -36,8 +39,8 @@ elmentMotion.addMotion('move', function (e, dragObj, point) {
 elmentMotion.addMotion('top', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: (e.clientX-point.section.x),
+        y: (e.clientY-point.section.y),
     }, point.bottomMiddlePoint, -point.initAngle)
     // 图像Tm
     let rotatedTopMiddlePoint = {
@@ -66,8 +69,8 @@ elmentMotion.addMotion('top', function (e, dragObj, point) {
 elmentMotion.addMotion('bottom', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y,
     }, point.topMiddlePoint, -point.initAngle)
     // 图像Tm
     let rotatedBottomMiddlePoint = {
@@ -96,8 +99,8 @@ elmentMotion.addMotion('bottom', function (e, dragObj, point) {
 elmentMotion.addMotion('left', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y,
     }, point.rightMiddlePoint, -point.initAngle)
     // 图像Tm
     let rotatedLeftMiddlePonit = {
@@ -126,8 +129,8 @@ elmentMotion.addMotion('left', function (e, dragObj, point) {
 elmentMotion.addMotion('right', function (e, dragObj, point) {
     // 求旋转图像Tm
     let rotateCurrentPos = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y,
     }, point.leftMiddlePoint, -point.initAngle)
     // 图像Tm
     let rotatedRightMiddlePoint = {
@@ -154,9 +157,10 @@ elmentMotion.addMotion('right', function (e, dragObj, point) {
     }, dragObj)
 })
 elmentMotion.addMotion('rotate', function (e, dragObj, point) {
+    console.log(e.offsetX,e.offsetY)
     point.rotateCurrent = {
-        x: Math.floor(e.clientX),
-        y: Math.floor(e.clientY)
+        x: Math.floor(e.clientX)-point.section.x,
+        y: Math.floor(e.clientY)-point.section.y,
     }
     point.curRadian = Math.atan2(point.rotateCurrent.y - point.centerPos.y, point.rotateCurrent.x - point.centerPos.x)
     point.tranformRadian = point.curRadian - point.preRadian
@@ -178,12 +182,12 @@ elmentMotion.addMotion('rotate', function (e, dragObj, point) {
 })
 elmentMotion.addMotion('topLeft', function (e, dragObj, point) {
     point.centerPos = {
-        x: Math.floor((e.clientX + point.rightBottomPoint.x) / 2),
-        y: Math.floor((e.clientY + point.rightBottomPoint.y) / 2)
+        x: Math.floor((e.clientX-point.section.x + point.rightBottomPoint.x) / 2),
+        y: Math.floor((e.clientY-point.section.y + point.rightBottomPoint.y) / 2)
     }
     let newLeftTopPoint = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y,
     }, point.centerPos, -point.initAngle)
     let newRightBottomPoint = getRotatedPoint(point.rightBottomPoint, point.centerPos, -point.initAngle)
     let newWidth = newRightBottomPoint.x - newLeftTopPoint.x
@@ -232,12 +236,12 @@ elmentMotion.addMotion('topLeft', function (e, dragObj, point) {
 })
 elmentMotion.addMotion('topRight', function (e, dragObj, point) {
     point.centerPos = {
-        x: Math.floor((e.clientX + point.leftBottomPoint.x) / 2),
-        y: Math.floor((e.clientY + point.leftBottomPoint.y) / 2)
+        x: Math.floor((e.clientX-point.section.x + point.leftBottomPoint.x) / 2),
+        y: Math.floor((e.clientY-point.section.y + point.leftBottomPoint.y) / 2)
     }
     let newRightTopPoint = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y,
     }, point.centerPos, -point.initAngle)
     let newLeftBottomPoint = getRotatedPoint(point.leftBottomPoint, point.centerPos, -point.initAngle)
     let newWidth = newRightTopPoint.x - newLeftBottomPoint.x
@@ -291,12 +295,12 @@ elmentMotion.addMotion('topRight', function (e, dragObj, point) {
 })
 elmentMotion.addMotion('bottomLeft', function (e, dragObj, point) {
     point.centerPos = {
-        x: Math.floor((e.clientX + point.rightTopPoint.x) / 2),
-        y: Math.floor((e.clientY + point.rightTopPoint.y) / 2)
+        x: Math.floor((e.clientX-point.section.x + point.rightTopPoint.x) / 2),
+        y: Math.floor((e.clientY-point.section.y + point.rightTopPoint.y) / 2)
     }
     let newLeftBottomPoint = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y
     }, point.centerPos, -point.initAngle)
     let newRightTopPoint = getRotatedPoint(point.rightTopPoint, point.centerPos, -point.initAngle)
     let newWidth = newRightTopPoint.x - newLeftBottomPoint.x
@@ -348,12 +352,12 @@ elmentMotion.addMotion('bottomLeft', function (e, dragObj, point) {
 })
 elmentMotion.addMotion('bottomRight', function (e, dragObj, point) {
     point.centerPos = {
-        x: Math.floor((e.clientX + point.leftTopPoint.x) / 2),
-        y: Math.floor((e.clientY + point.leftTopPoint.y) / 2)
+        x: Math.floor((e.clientX-point.section.x + point.leftTopPoint.x) / 2),
+        y: Math.floor((e.clientY-point.section.y + point.leftTopPoint.y) / 2)
     }
     let newRightBottomPoint = getRotatedPoint({
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX-point.section.x,
+        y: e.clientY-point.section.y
     }, point.centerPos, -point.initAngle)
     let newLeftTopPoint = getRotatedPoint(point.leftTopPoint, point.centerPos, -point.initAngle)
     let newWidth = newRightBottomPoint.x - newLeftTopPoint.x
