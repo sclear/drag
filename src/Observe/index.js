@@ -1,8 +1,9 @@
 import { getRotate, getTransferPosition, initPoint, throttle } from '../util/index'
 import elmentMotion from '../motion/motion.js'
 class Observe {
-    constructor(el) {
+    constructor(el, $emit) {
         this.el = el;
+        this.$emit = $emit
         this.el.className = ''
         this.point = {
             section: {
@@ -18,37 +19,28 @@ class Observe {
         initPoint(this.point, this.el)
         this.init()
     }
-    move(e) {
-        if (this.dragging) {
-            elmentMotion.update(this.MoveType, e, this.el, this.point)
-        }
-    }
-    initProxy() {
-        this.el.addEventListener('click', e => {
-            setTimeout(()=> {
-                this.showPoint = true
-            },4)
-        }, false)
-        let a = this.showPoint
-        Object.defineProperty(this, 'showPoint', {
-            get() {
-                return a
-            },
-            set(v) {
-                if (v) this.el.className = 'dialog'
-                else this.el.className = ''
-                a = v
-            }
-        })
-    }
+    // 初始化当前实例状态
     init() {
         this.el.addEventListener('mousedown', (event) => {
+            // Emit 传递多选信息
+            event.stopPropagation()
+            if (this.showPoint) { }
+            else {
+                this.$emit('removeSelect')
+                setTimeout(() => {
+                    this.showPoint = true
+                }, 4)
+            }
+
             this.MoveType = 'move'
             this.dragging = true;
             this.moveInit(1, event, 1)
+            this.$emit('downLoding', event)
         }, false)
         document.addEventListener('mouseup', (event) => {
+            event.stopPropagation()
             this.dragging = false;
+            this.$emit('downEnd')
             const { left, top, width, height } = this.el.style;
             let poins = {
                 x: parseInt(width) / 2 + parseInt(left),
@@ -83,7 +75,35 @@ class Observe {
             }
         })
     }
-    // Move初始化
+    // 函数节流后移动函数
+    move(e) {
+        if (this.dragging) {
+            console.log(this.dragging)
+            elmentMotion.update(this.MoveType, e, this.el, this.point)
+        }
+    }
+    // 修改Observe状态
+    initProxy() {
+        let a = this.showPoint
+        Object.defineProperty(this, 'showPoint', {
+            get() {
+                return a
+            },
+            set(v) {
+                if (v) {
+                    this.$emit('addMotion', this)
+                    this.el.className = 'dialog'
+                }
+                else {
+                    this.$emit('removeMotion', this)
+                    this.el.className = ''
+                }
+                a = v
+            }
+        })
+    }
+
+    // Move开始时候的初始化
     moveInit(type, e) {
         this.point.mouseInit = {
             x: (Math.floor(e.clientX) - this.point.section.x),
