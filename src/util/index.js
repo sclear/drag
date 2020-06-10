@@ -154,3 +154,18 @@ export function throttle(fn, wait = 10) {
         }
     }
 }
+
+
+// 计算点是否在矩形内部
+function IsRectIn(a, b, c, d, p, notXY) {
+    return a.x - notXY.x < p.x && p.x < b.x-notXY.x && a.y - notXY.y < p.y && p.y < c.y - notXY.y
+}
+// 计算矩形是否在另一个矩形内部
+export function IsPointInMatrix(a, b, c, d, p, notXY) {
+    let ary = [];
+    ary.push( IsRectIn(a, b, c, d, p.leftTopPoint, notXY))
+    ary.push( IsRectIn(a, b, c, d, p.leftBottomPoint, notXY))
+    ary.push( IsRectIn(a, b, c, d, p.rightTopPoint, notXY))
+    ary.push( IsRectIn(a, b, c, d, p.rightBottomPoint, notXY))
+    return ary.every(item=> item)
+}

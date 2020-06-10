@@ -21,12 +21,10 @@ class Motion {
 
 let elmentMotion = new Motion()
 elmentMotion.addMotion('move', function (e, dragObj, point) {
-    console.log(e)
     let dis = {
         x: (Math.floor(e.clientX - point.mouseInit.x)-point.section.x),
         y: (Math.floor(e.clientY - point.mouseInit.y)-point.section.y)
     }
-    console.log(dis)
     point.left = dis.x + point.initPosition.x;
     point.top = dis.y + point.initPosition.y;
     setStyle({
