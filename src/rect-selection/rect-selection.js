@@ -1,4 +1,4 @@
-import { throttle } from './index'
+import { throttle } from '../util/index'
 class rectSelection {
   constructor(cb = null) {
     this.cb = cb;
@@ -25,7 +25,7 @@ class rectSelection {
   }
   init() {
     document.body.addEventListener('mousedown', event => {
-      event.stopPropagation()
+      // event.stopPropagation()
       // 鼠标按下时才允许处理鼠标的移动事件
       if (event.target === document.body || event.target === document.querySelector('#section')) {
         this.time = new Date().getTime()
@@ -42,6 +42,7 @@ class rectSelection {
     document.body.addEventListener('mouseup', event => {
       if ((new Date().getTime() - this.time) > 200 && this.time !== null) {
         this.calcPoint(event)
+        this.time = null
       } else {
         this.time = null
       }
@@ -62,7 +63,6 @@ class rectSelection {
       if (this.select) {
         this.el.style.width = Math.abs(this.mouseMoveX - this.downX) + 'px';
         this.el.style.height = Math.abs(this.mouseMoveY - this.downY) + 'px';
-        console.log(Math.abs(this.mouseMoveX - this.downX))
         this.el.style.visibility = 'visible';
         if (this.mouseMoveX < this.downX && this.mouseMoveY < this.downY) {
           this.el.style.left = this.mouseMoveX + 'px';
