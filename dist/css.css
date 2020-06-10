@@ -115,3 +115,14 @@
     top: 0;
     transform: translate(-50%, -250%);
 }
+
+.newDom {
+    position: absolute;
+    left: 0;
+    top: 0px;
+    height: 200px;
+    width: 200px;
+    border: 1px dashed red;
+    background: burlywood;
+    transform: rotate(0deg);
+}
