@@ -24,7 +24,9 @@ class Observe {
         this.el.addEventListener('mousedown', (event) => {
             // Emit 传递多选信息
             event.stopPropagation()
+            // 当前本身选中down时 不执行
             if (this.showPoint) { }
+            //未选中时执行删除选中的
             else {
                 this.$emit('removeSelect')
                 setTimeout(() => {
@@ -78,7 +80,6 @@ class Observe {
     // 函数节流后移动函数
     move(e) {
         if (this.dragging) {
-            console.log(this.dragging)
             elmentMotion.update(this.MoveType, e, this.el, this.point)
         }
     }

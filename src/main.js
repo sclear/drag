@@ -1,6 +1,6 @@
 import { Observe } from './Observe/index'
-import { throttle } from './util/index'
-import rectSelection from './util/rect-selection'
+import { throttle, IsPointInMatrix } from './util/index'
+import rectSelection from './rect-selection/rect-selection'
 
 /**
  * interface state {
@@ -22,13 +22,17 @@ class Combination {
     }
     // 初始化 绑定事件
     init() {
-        new rectSelection(()=> {
+        new rectSelection((p)=> {
+            this.removeSelect()
             this.selectArrrayObserves.forEach(item=> {
-                item.showPoint = true
+                // 判断矩形是否在矩形内部 是就选中
+                if(IsPointInMatrix(p.lt, p.rt, p.rb, p.lb, item.point,item.point.section)) {
+                    item.showPoint = true
+                }
             })
         })
         document.addEventListener('mousemove', throttle(e => {
-            this.selectArrrayObserves.forEach(item => { item.move(e) })
+            this.motionObserves.forEach(item => { item.move(e) })
         }), false)
 
         document.body.onmousedown = (e) => {
@@ -77,7 +81,7 @@ class Combination {
         if (M_Index >= 0 && _M_index === -1) {
             this.motionObserves.push(M)
         } 
-        // else throw new Error('实例添加错误')
+        else throw new Error('实例添加错误')
     }
     // 运动实例移出运动列表
     removeMotion(M) {
@@ -108,8 +112,23 @@ class Combination {
 
 let observes = new Combination()
 
-observes.createObserve('#test', '#test1')
+observes.createObserve('#test', '#test1', '#test2', '#test3')
 
+function createDom() {
+    let dom = document.createElement('div');
+    dom.style.height = '100px'
+    dom.style.width = '100px'
+    dom.style.background = 'red'
+    dom.style.position = 'absolute'
+    dom.style.left = 0 + 'px'
+    dom.style.top = 0 + 'px'
+    dom.className = 'newDom';
+    document.querySelector('section').appendChild(dom)
+    observes.createObserve(dom)
+}
+for(let i = 0; i < 5; i++) {
+    createDom()
+}
 
 
 
