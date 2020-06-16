@@ -1,0 +1,73 @@
+{
+    "editor.wordWrap": "on",
+    "update.enableWindowsBackgroundUpdates": false,
+    "update.mode": "none",
+    "update.showReleaseNotes": false,
+    "window.zoomLevel": 0,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "explorer.confirmDelete": false,
+    // #值设置为true时，每次保存的时候自动格式化；值设置为false时，代码格式化请按shift+alt+F
+    "editor.formatOnSave": true,
+    //设置tab的缩进为2
+    "editor.tabSize": 2,
+    // #每次保存的时候将代码按eslint和tslint格式进行修复
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "eslint.autoFixOnSave": false,
+        "source.fixAll.tslint": true
+    },
+    "eslint.run": "onSave",
+    //  #让prettier使用eslint的代码格式进行校验
+    // vscode 更新后已经统一使用editor.codeActionsOnsave
+    //  #代码结尾加分号为好
+    "prettier.semi": true,
+    //  #使用带引号替代双引号
+    "prettier.singleQuote": true,
+    "prettier.tabWidth": 4,
+    //  #让函数(名)和后面的括号之间加个空格
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    // #这个按用户自身习惯选择
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    // #让vue中的js按"prettier"格式进行格式化
+    "vetur.format.defaultFormatter.js": "prettier",
+    "vetur.format.defaultFormatterOptions": {
+        "js-beautify-html": {
+            // #vue组件中html代码格式化样式
+            "wrap_attributes": "force-aligned", //也可以设置为“auto”，效果会不一样
+            "wrap_line_length": 200,
+            "end_with_newline": false,
+            "semi": false,
+            "singleQuote": true
+        },
+        "prettier": {
+            "semi": false,
+            "singleQuote": true
+        }
+    },
+    // 格式化stylus, 需安装Manta's Stylus Supremacy插件
+    "stylusSupremacy.insertColons": false, // 是否插入冒号
+    "stylusSupremacy.insertSemicolons": false, // 是否插入分号
+    "stylusSupremacy.insertBraces": false, // 是否插入大括号
+    "stylusSupremacy.insertNewLineAroundImports": false, // import之后是否换行
+    "stylusSupremacy.insertNewLineAroundBlocks": false,
+    "prettier.useTabs": true,
+    "files.autoSave": "off",
+    "diffEditor.ignoreTrimWhitespace": false,
+    //在vue文件里设置html关联
+    "emmet.syntaxProfiles": {
+        "vue-html": "html",
+        "vue": "html"
+    },
+    "explorer.confirmDragAndDrop": false,
+    "terminal.integrated.rendererType": "dom",
+    "files.associations": {
+        "*.ejs": "html",
+        "*.vue": "html"
+    },
+    "emmet.triggerExpansionOnTab": true,
+    "emmet.includeLanguages": {
+        "vue-html": "html",
+        "vue": "html"
+    },
+    "editor.accessibilitySupport": "on"
+}

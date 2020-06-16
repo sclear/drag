@@ -3,7 +3,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   devtool: "source-map", 
   mode: 'development',
-  entry: './src/main.js',
+  entry: './src/main.ts',
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, 'dist')
@@ -13,8 +13,23 @@ module.exports = {
       {
         test: /\.css$/,
         use: [ 'style-loader', 'css-loader' ]
+      },
+      {
+        test: /\.ts?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+         appendTsSuffixTo: [/\.vue$/],
+        }
       }
+      // {
+      //   test: /\.ts$/,
+      //   use
+      // }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.css', '.ts']
   },
   plugins: [
     new HtmlWebpackPlugin({ // 打包输出HTML
