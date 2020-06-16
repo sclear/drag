@@ -1,0 +1,23 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-console": true,
+        "only-arrow-functions": false,
+        "class-name": true,
+        "array-type": [
+            false,
+            "array"
+        ],
+        "variable-name": false,
+        "prefer-for-of": false,
+        "prefer-const": false,
+        "callable-types": false,
+        "forin": false,
+        "no-empty": false
+    },
+    "rulesDirectory": []
+}
