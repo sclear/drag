@@ -7,6 +7,7 @@ interface Ipoint {
 }
 export interface IObserve {
     el: any
+    type: string
     $emit(): void
     point: any
     MoveType: any
@@ -20,15 +21,17 @@ export interface IObserve {
 }
 class Observe implements IObserve {
     public el: any
+    public type: string
     public $emit: any
     public point: any
     public MoveType: any
     public dragging: boolean
     public showPoint: boolean
-    constructor(el: any, $emit: any) {
+    constructor(el: any, $emit: any, type: string) {
         this.el = el;
         this.$emit = $emit
         this.el.className = ''
+        this.type = type
         this.point = {
             section: {
                 x: parseInt((window as any).document.querySelector('section').style.left, 10) || 0,
@@ -81,15 +84,23 @@ class Observe implements IObserve {
             newEl.draggable = true
             el.appendChild(newEl)
         }
-        create(this.el, 'left')
-        create(this.el, 'right')
-        create(this.el, 'top')
-        create(this.el, 'rotate')
-        create(this.el, 'bottom')
-        create(this.el, 'topLeft')
-        create(this.el, 'topRight')
-        create(this.el, 'bottomLeft')
-        create(this.el, 'bottomRight');
+
+        if (['text'].includes(this.type)) {
+            create(this.el, 'left')
+            create(this.el, 'right')
+            create(this.el, 'rotate')
+        }
+        else {
+            create(this.el, 'left')
+            create(this.el, 'right')
+            create(this.el, 'top')
+            create(this.el, 'rotate')
+            create(this.el, 'bottom')
+            create(this.el, 'topLeft')
+            create(this.el, 'topRight')
+            create(this.el, 'bottomLeft')
+            create(this.el, 'bottomRight');
+        }
         [...this.el.children].forEach(item => {
             item.onmousedown = (event: any) => {
                 if (['left', 'right', 'top', 'rotate', 'bottom', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'].includes(item.className)) {

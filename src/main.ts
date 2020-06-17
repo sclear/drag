@@ -67,9 +67,9 @@ class Combination implements ICombination {
     public createDom() { }
     // 创建实例 Element || String
     public createObserve(...args: Array<any>) {
-        for (let i = 0; i < args.length; i++) {
-            if (typeof args[i] === 'string') this.addObserves(new Observe(document.querySelector(args[i]), this.$on))
-            else this.addObserves(new Observe(args[i], this.$on))
+        for (let i = 0; i < args.length - 1; i++) {
+            if (typeof args[i] === 'string') this.addObserves(new Observe(document.querySelector(args[i]), this.$on, args[args.length - 1]))
+            else this.addObserves(new Observe(args[i], this.$on, args[args.length - 1]))
         }
     }
     // 添加新实例
@@ -123,167 +123,75 @@ class Combination implements ICombination {
 
 let observes: any = new Combination()
 
-observes.createObserve('#test', '#test1', '#test2', '#test3')
+observes.createObserve('#test', 'rect')
+// observes.createObserve('#test', '#test1', '#test2', '#test3')
 
-function createDom() {
+/**
+ * @param { rect text  } type
+ */
+function createDom(html: any, type: string, option: any): void {
+    const Htype: Array<string> = ['text']
     let dom = (window as any).document.createElement('div');
-    dom.style.height = '100px'
-    dom.style.width = '100px'
-    dom.style.background = 'red'
+    if (html && typeof html === 'object') {
+        html.style.height = '100%'
+        html.style.width = '100%'
+        dom.appendChild(html)
+    }
+    else if (html && typeof html === 'string') {
+        dom.innerHTML = html
+        dom.children[0].style.height = '100%'
+        dom.children[0].style.width = '100%'
+    }
+    if (Htype.includes(type)) {
+
+    }
+    else {
+        dom.style.height = '230px'
+    }
+    // dom.style.left = 0 + 'px'
+    // dom.style.top = 0 + 'px'
+    if (option) {
+        dom.style.left = option.left + 'px'
+        dom.style.top = option.top + 'px'
+    }
+    dom.style.width = '230px'
     dom.style.position = 'absolute'
-    dom.style.left = 0 + 'px'
-    dom.style.top = 0 + 'px'
+
     dom.className = 'newDom';
     (window as any).document.querySelector('section').appendChild(dom)
-    observes.createObserve(dom)
+    observes.createObserve(dom, type)
 }
-for (let i = 0; i < 5; i++) {
-    createDom()
-}
-
-
-
-
-
-// document.body.onclick = () => {
-//     Observes.forEach(item => {
-//         item.showPoint = false
-//     })
-// }
-// let Observes = []
-
-// function createObserve(...args) {
-//     for (let i = 0; i < args.length; i++) {
-//         if (typeof args[i] === 'string') Observes.push(new Observe(document.querySelector(args[i])))
-//         else Observes.push(new Observe(args[i]))
-//     }
-// }
-// createObserve('#test', '#test1')
-
-
-
-
-
-// document.addEventListener('mousemove', throttle((e) => {
-//     Observes.forEach(item => {
-//         item.move(e)
-//     })
-// }), false)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// new rectSelection()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let $ = el => document.querySelector(el)
-
-
-// $('.drag').addEventListener('dragstart', e => {
-//     e.dataTransfer.setData("Text", JSON.stringify({
-//         x: e.offsetX,
-//         y: e.offsetY
-//     }));
-//     console.log(e)
-// }, false)
-// $('section').addEventListener('drop', e => {
-//     let xy = JSON.parse(e.dataTransfer.getData('Text'))
-//     console.log(xy)
-//     e.preventDefault()
-//     let dom = document.createElement('div')
-//     dom.style.height = '100px'
-//     dom.style.width = '100px'
-//     dom.style.background = 'red'
-//     dom.style.position = 'absolute'
-//     dom.style.left = (e.clientX - 300 - xy.x) + 'px'
-//     dom.style.top = (e.clientY - 150 - xy.y) + 'px'
-//     dom.className = 'dialog'
-//     $('section').appendChild(dom)
-//     createObserve(dom)
-//     console.log(e)
-// }, false)
-// $('section').addEventListener('dragover', e => {
-//     e.preventDefault()
-//     // console.log(e)
-// }, false)
-
-
-// function allowDrop(e) {
-//     event.preventDefault()
-//     // console.log('移动', e)
-// }
-// function drop(e) {
-//     e.preventDefault()
-//     console.log('放置', e)
-// }
-// function drag(ev) {
-//     console.log(ev)
-//     // ev.dataTransfer.setData("Text", ev.target.id);
-// }
-
-// document.onkeydown = function (event) {
-//     var e = event || window.event || arguments.callee.caller.arguments[0];
-//     // console.log(e.keyCode)
-//     if(e.keyCode === 46 ) {
-//         Observes.forEach( (item, i)=> {
-//             if(item.el === document.querySelector('#test')) {
-//                 console.log(item.el)
-//                 item.remove()
-//                 Observes.splice(i,1)
-//                 console.log(Observes)
-
-//             }
-//         })
-//     }
-//     // e.preventDefault()
-// }
+// createDom(
+//     '<div contenteditable="true" style="background:blue;color:white;">真是的</div>', 'text'
+// )
+
+
+let $ = (el: any) => document.querySelector(el)
+
+$('.drag').addEventListener('dragstart', (e: any) => {
+    e.dataTransfer.setData("Text", JSON.stringify({
+        x: e.offsetX,
+        y: e.offsetY,
+        type: 'rect'
+    }));
+}, false)
+$('.drags').addEventListener('dragstart', (e: any) => {
+    e.dataTransfer.setData("Text", JSON.stringify({
+        x: e.offsetX,
+        y: e.offsetY,
+        type: 'text',
+        dom: '<div contenteditable="true" style="background:blue;color:white;">text</div>'
+    }));
+}, false)
+$('section').addEventListener('drop', (e: any) => {
+    let xy = JSON.parse(e.dataTransfer.getData('Text'))
+    e.preventDefault()
+    let dom: any = $('.drag').cloneNode(true)
+    dom.draggable = false
+    createDom(
+        xy.dom ? xy.dom : dom, xy.type, { left: e.clientX - 300 - xy.x, top: e.clientY - 150 - xy.y }
+    )
+}, false)
+$('section').addEventListener('dragover', (e: any) => {
+    e.preventDefault()
+}, false)

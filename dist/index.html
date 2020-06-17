@@ -3,51 +3,40 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="./css.css">
     <style>
         .drag {
-            cursor: move;
+            cursor: move
         }
-
-        
     </style>
 </head>
 
 <body>
-    <div class="drag" draggable="true" style="height: 100px;width:100px;background:goldenrod;position: absolute;">拖动
-    </div>
+    <div class="drag" draggable="true" style="height:100px;width:100px;background:#daa520;position:absolute">拖动</div>
+    <div class="drags" draggable="true"
+        style="height:100px;width:100px;background:blue;color: white;position:absolute;left:100px;">
+        text</div>
+    <!-- <div class="drag" style="height:100px;width:100px;background:#daa520;position:absolute">拖动</div> -->
     <section id="section" class="ds"
-        style="transform: scale(1);position: relative;height: 720px;width: 970px;left:300px;top: 150px;background: grey;">
+        style="transform:scale(1);position:relative;height:720px;width:970px;left:300px;top:150px;background:grey">
         <div id="test" class="dialog"
-            style="position:absolute;left:0;top:0px;height: 200px;width: 200px;border: 1px dashed red;background: burlywood;transform: rotate(0deg);">
+            style="position:absolute;left:0;top:0;height:200px;width:200px;border:1px dashed red;background:#deb887;transform:rotate(0)">
+            <!-- <div class="drags" style="height: 100px;width:100px;background:black;">
+            </div> -->
         </div>
-        <div id="test1" class="dialog"
-            style="position:absolute;left:0;top:0px;height: 200px;width: 200px;border: 1px dashed red;background: burlywood;transform: rotate(0deg);">
+        <!-- <div id="test1" class="dialog"
+            style="position:absolute;left:0;top:0;height:200px;width:200px;border:1px dashed red;background:#deb887;transform:rotate(0)">
         </div>
         <div id="test2" class="dialog"
-            style="position:absolute;left:0;top:0px;height: 200px;width: 200px;border: 1px dashed red;background: burlywood;transform: rotate(0deg);">
+            style="position:absolute;left:0;top:0;height:200px;width:200px;border:1px dashed red;background:#deb887;transform:rotate(0)">
         </div>
         <div id="test3" class="dialog"
-            style="position:absolute;left:0;top:0px;height: 200px;width: 200px;border: 1px dashed red;background: burlywood;transform: rotate(0deg);">
-        </div>
+            style="position:absolute;left:0;top:0;height:200px;width:200px;border:1px dashed red;background:#deb887;transform:rotate(0)">
+        </div> -->
     </section>
 </body>
-<script>
-    // function allowDrop(e) {
-    //     event.preventDefault()
-    //     // console.log('移动', e)
-    // }
-    // function drop(e) {
-    //     e.preventDefault()
-    //     console.log('放置', e)
-    // }
-    // function drag(ev) {
-    //     console.log(ev)
-    //     // ev.dataTransfer.setData("Text", ev.target.id);
-    // }
-</script>
 
 </html>
