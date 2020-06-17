@@ -1,14 +1,5 @@
 import { setStyle } from './setstyle'
 import { getRotatedPoint, getRotate } from './../util/index'
-
-// interface Imotion {
-//     MotionType: any
-//     // addMotion(type: string, fn: any): void
-//     // MotionType: any
-//     // removeMotion(type: string): void
-//     // update(type: string, e: any, dragObj: any, point: any): void
-// }
-
 interface ImoveFn {
     (e: any, dragObj: any, point: any): void
 }

@@ -67,7 +67,8 @@ class Observe implements IObserve {
             event.stopPropagation()
             this.dragging = false;
             this.$emit('downEnd')
-            const { left, top, width, height } = this.el.style;
+            // const { left, top, width, height } = this.el.style;
+            const { left, top, width, height } = getComputedStyle(this.el);
             let poins = {
                 x: parseInt(width, 10) / 2 + parseInt(left, 10),
                 y: parseInt(height, 10) / 2 + parseInt(top, 10)
@@ -91,10 +92,11 @@ class Observe implements IObserve {
         create(this.el, 'bottomRight');
         [...this.el.children].forEach(item => {
             item.onmousedown = (event: any) => {
-                event.stopPropagation()
-                this.MoveType = item.className
-                event.stopPropagation()
-                event.preventDefault()
+                if (['left', 'right', 'top', 'rotate', 'bottom', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'].includes(item.className)) {
+                    this.MoveType = item.className
+                    event.stopPropagation()
+                    event.preventDefault()
+                }
                 this.dragging = true;
                 this.moveInit(1, event)
                 this.moveInit(item.className === 'rotate' ? 0 : 1, event)
@@ -158,3 +160,5 @@ class Observe implements IObserve {
     }
 }
 export { Observe }
+
+
