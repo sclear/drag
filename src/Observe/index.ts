@@ -13,6 +13,7 @@ export interface IObserve {
     MoveType: any
     dragging: boolean
     showPoint: boolean
+    notPoint: Array<string>
     init(): void
     move(e: any): void
     initProxy(): void
@@ -27,6 +28,7 @@ class Observe implements IObserve {
     public MoveType: any
     public dragging: boolean
     public showPoint: boolean
+    public notPoint: Array<string>
     constructor(el: any, $emit: any, type: string) {
         this.el = el;
         this.$emit = $emit
@@ -42,6 +44,7 @@ class Observe implements IObserve {
         this.MoveType = null;
         this.dragging = false;
         this.showPoint = false;
+        this.notPoint = ['text']
         this.initProxy()
         initPoint(this.point, this.el)
         this.init()
@@ -85,10 +88,15 @@ class Observe implements IObserve {
             el.appendChild(newEl)
         }
 
-        if (['text'].includes(this.type)) {
+        if (this.notPoint.includes(this.type)) {
+            create(this.el, 'borderL');
+            create(this.el, 'borderT');
+            create(this.el, 'borderR');
+            create(this.el, 'borderB');
             create(this.el, 'left')
             create(this.el, 'right')
             create(this.el, 'rotate')
+            // create(this.el, 'border');
         }
         else {
             create(this.el, 'left')
@@ -99,7 +107,7 @@ class Observe implements IObserve {
             create(this.el, 'topLeft')
             create(this.el, 'topRight')
             create(this.el, 'bottomLeft')
-            create(this.el, 'bottomRight');
+            create(this.el, 'bottomRight')
         }
         [...this.el.children].forEach(item => {
             item.onmousedown = (event: any) => {
@@ -107,10 +115,18 @@ class Observe implements IObserve {
                     this.MoveType = item.className
                     event.stopPropagation()
                     event.preventDefault()
+                    this.dragging = true;
+                    this.moveInit(1, event)
+                    this.moveInit(item.className === 'rotate' ? 0 : 1, event)
                 }
-                this.dragging = true;
-                this.moveInit(1, event)
-                this.moveInit(item.className === 'rotate' ? 0 : 1, event)
+                else if (['borderL', 'borderT', 'borderR', 'borderB'].includes(item.className)) {
+
+                }
+                else {
+                    this.dragging = true;
+                    this.moveInit(1, event)
+                    this.moveInit(item.className === 'rotate' ? 0 : 1, event)
+                }
             }
         })
     }
@@ -130,7 +146,9 @@ class Observe implements IObserve {
             set(v) {
                 if (v) {
                     this.$emit('addMotion', this)
-                    this.el.className = 'dialog'
+                    // this.el.className = 'dialog'
+                    // console.log(this)
+                    this.notPoint.includes(this.type) ? this.el.className = 'dialog isBorder' : this.el.className = 'dialog'
                 }
                 else {
                     this.$emit('removeMotion', this)
@@ -171,5 +189,3 @@ class Observe implements IObserve {
     }
 }
 export { Observe }
-
-
