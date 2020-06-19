@@ -10,8 +10,8 @@
 .dialog>.left {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #8a848440;
+    background: white;
+    border: 1px solid #8a848440;
     cursor: w-resize;
     position: absolute;
     left: 0;
@@ -22,8 +22,8 @@
 .dialog>.right {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: e-resize;
     position: absolute;
     right: 0;
@@ -34,8 +34,8 @@
 .dialog>.top {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: n-resize;
     position: absolute;
     right: 45%;
@@ -46,8 +46,8 @@
 .dialog>.bottom {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: s-resize;
     position: absolute;
     right: 45%;
@@ -58,8 +58,8 @@
 .dialog>.topLeft {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: nw-resize;
     position: absolute;
     left: 0;
@@ -70,8 +70,8 @@
 .dialog>.topRight {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: ne-resize;
     position: absolute;
     right: 0;
@@ -82,8 +82,8 @@
 .dialog>.bottomLeft {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: sw-resize;
     position: absolute;
     left: 0;
@@ -94,8 +94,8 @@
 .dialog>.bottomRight {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     cursor: se-resize;
     position: absolute;
     right: 0;
@@ -106,8 +106,8 @@
 .dialog>.rotate {
     width: 5px;
     height: 5px;
-    background:white;
-    border:1px solid #00000040;
+    background: white;
+    border: 1px solid #00000040;
     /* cursor: url('./img/rotateicon.png') 10 10, default; */
     position: absolute;
     /* right: 45%; */
@@ -125,4 +125,42 @@
     border: 1px dashed red;
     background: burlywood;
     transform: rotate(0deg);
+}
+
+/* is border */
+
+.isBorder .borderL {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0px;
+    border-left: 1px dashed black;
+}
+
+.isBorder .borderT {
+    position: absolute;
+    left: 0px;
+    top: 0;
+    height: 0px;
+    width: 100%;
+    border-top: 1px dashed black;
+}
+
+.isBorder .borderR {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 0px;
+    border-right: 1px dashed black;
+}
+
+.isBorder .borderB {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 0px;
+    width: 100%;
+    border-bottom: 1px dashed black;
 }

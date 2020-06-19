@@ -64,7 +64,7 @@ class Combination implements ICombination {
         }
     }
     // 创建节点
-    public createDom() { }
+    public createDom() {}
     // 创建实例 Element || String
     public createObserve(...args: Array<any>) {
         for (let i = 0; i < args.length - 1; i++) {
@@ -74,7 +74,9 @@ class Combination implements ICombination {
     }
     // 添加新实例
     public addObserves(S: IObserve) {
+        this.removeSelect()
         this.selectArrrayObserves.push(S)
+        S.showPoint = true
     }
     // 删除实例
     public removeObserves(S: IObserve) {
@@ -148,8 +150,8 @@ function createDom(html: any, type: string, option: any): void {
     else {
         dom.style.height = '230px'
     }
-    // dom.style.left = 0 + 'px'
-    // dom.style.top = 0 + 'px'
+    dom.style.left = 0 + 'px'
+    dom.style.top = 0 + 'px'
     if (option) {
         dom.style.left = option.left + 'px'
         dom.style.top = option.top + 'px'
@@ -161,9 +163,6 @@ function createDom(html: any, type: string, option: any): void {
     (window as any).document.querySelector('section').appendChild(dom)
     observes.createObserve(dom, type)
 }
-// createDom(
-//     '<div contenteditable="true" style="background:blue;color:white;">真是的</div>', 'text'
-// )
 
 
 let $ = (el: any) => document.querySelector(el)
@@ -180,7 +179,7 @@ $('.drags').addEventListener('dragstart', (e: any) => {
         x: e.offsetX,
         y: e.offsetY,
         type: 'text',
-        dom: '<div contenteditable="true" style="background:blue;color:white;">text</div>'
+        dom: '<div contenteditable="true" style="cursor: pointer;text-align:center;">text</div>'
     }));
 }, false)
 $('section').addEventListener('drop', (e: any) => {
